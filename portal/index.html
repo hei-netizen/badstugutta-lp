@@ -207,15 +207,15 @@ footer{padding:32px 0 48px;color:var(--faint);font-size:13px;text-align:center}
 <div class="page-h"><span class="eyebrow">Kundeportal</span><h1>Hei, Mattis og Elliot.</h1>
 <p class="lead">Alt om samarbeidet vårt samlet på ett sted: oppstart, rapporter, annonser og avtalen.</p></div>
 <div class="statusline"><span class="pulse"></span><div><b>Nå: I drift – Google og Meta kjører</b><br><span style="color:var(--muted)">Ny video er klar til godkjenning: «Hvor skal du begynne?». Se den under Annonser.</span></div></div>
-<div class="tall-h"><h2>Denne uka</h2><span id="tallPeriode">Fra lansering</span></div>
-<div class="kpis"><div class="kpi"><small>Henvendelser</small><b id="kHenv">–</b></div><div class="kpi"><small>Annonsekostnad</small><b id="kKost">–</b></div><div class="kpi"><small>Per henvendelse</small><b id="kPer">–</b></div></div>
+<div id="tall" hidden><div class="tall-h"><h2>Denne uka</h2><span id="tallPeriode">Fra lansering</span></div>
+<div class="kpis"><div class="kpi"><small>Henvendelser</small><b id="kHenv">–</b></div><div class="kpi"><small>Annonsekostnad</small><b id="kKost">–</b></div><div class="kpi"><small>Per henvendelse</small><b id="kPer">–</b></div></div></div>
 <div class="tiles" style="margin-top:22px"><a class="tile" href="/oppstart/"><b>Oppstart</b><span>Tilganger og info om bedriften.</span><em>Fullført</em></a><a class="tile" href="/portal/rapporter/"><b>Rapporter</b><span>Ukesrapport hver mandag.</span><em class="wait">Flyttes hit snart</em></a><a class="tile" href="/portal/annonser/"><b>Annonser</b><span>Nye annonser til godkjenning.</span><em>1 nytt forslag</em></a><a class="tile" href="/portal/avtale/"><b>Avtale</b><span>Samarbeidsavtalen.</span><em class="wait">Oppdateres</em></a></div>
 <script>
 fetch('/portal/tall.json?'+Date.now()).then(r=>r.json()).then(d=>{if(!d.live)return;
 const kr=v=>v==null?'–':v.toLocaleString('nb-NO')+' kr';
 document.getElementById('kHenv').textContent=d.henvendelser.toLocaleString('nb-NO');
 document.getElementById('kKost').textContent=kr(d.kostnad);document.getElementById('kPer').textContent=kr(d.per_henvendelse);
-document.getElementById('tallPeriode').textContent=d.fra+'–'+d.til;}).catch(()=>{});
+document.getElementById('tallPeriode').textContent=d.fra+'–'+d.til;document.getElementById('tall').hidden=false;}).catch(()=>{});
 </script>
 <section id="kontakt">
     <div class="card person">
