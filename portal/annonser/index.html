@@ -172,6 +172,9 @@ footer{padding:32px 0 48px;color:var(--faint);font-size:13px;text-align:center}
 .ad-endre textarea{min-height:70px;font-size:14px}
 .ad-endre button{justify-self:start;background:var(--deep);border-color:var(--deep);color:#fff}
 .chip.ok{background:var(--tint);color:var(--green-text)}
+.ad-kommentar{margin:0 14px 4px;padding:10px 12px;border-radius:10px;background:var(--amber-bg);color:var(--ink);font-size:14px;line-height:1.45}
+.ad-endre label{display:grid;gap:6px;font-size:14px;font-weight:600}
+.adgrid .vidrow.bred{grid-column:1/-1;background:var(--paper)!important;border:1px solid var(--line)!important;border-radius:var(--r);padding:14px}
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-top:14px}
 .kpi{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:18px}
 .kpi small{display:block;color:var(--muted);font-size:13px;font-weight:600}
@@ -203,22 +206,33 @@ footer{padding:32px 0 48px;color:var(--faint);font-size:13px;text-align:center}
 <main class="wrap">
 <div class="page-h"><span class="eyebrow">Annonser</span><h1>Annonsene deres</h1>
 <p class="lead">Video og bildeannonser vi har laget til dere.</p></div>
-<section style="padding-top:20px"><h2>Video</h2><div class="vidrow ad" style="border:0;background:none" data-id="11_2026-10-02_badstugutta_problem-losning-video-v6_9x16" data-navn="Hvor skal du begynne? (problem → løsning)"><video controls playsinline preload="none" poster="img/11_2026-10-02_badstugutta_problem-losning-video-v6_9x16.jpg" src="img/11_2026-10-02_badstugutta_problem-losning-video-v6_9x16.mp4"></video>
-<div><div class="ad-meta" style="padding:0 0 4px"><h3 style="margin:0">Hvor skal du begynne? (problem → løsning)</h3><span class="chip">Forslag</span></div><div class="ad-act" style="padding:8px 0 0"><button type="button" class="ok">Godkjenn</button><button type="button" class="endre">Endre</button></div><form class="ad-endre" style="padding:8px 0 0" hidden><textarea placeholder="Hva vil dere endre?" aria-label="Hva vil dere endre?"></textarea><button type="submit">Send</button></form></div></div></section>
+<section id="sec-nei" style="padding-top:20px" hidden><h2>Ikke godkjent</h2><div class="adgrid" id="g-nei"></div></section>
+<section style="padding-top:20px"><h2>Video</h2><div id="g-video"><div class="vidrow ad" style="border:0;background:none" data-id="11_2026-10-02_badstugutta_problem-losning-video-v6_9x16" data-navn="Hvor skal du begynne? (problem → løsning)"><video controls playsinline preload="none" poster="img/11_2026-10-02_badstugutta_problem-losning-video-v6_9x16.jpg" src="img/11_2026-10-02_badstugutta_problem-losning-video-v6_9x16.mp4"></video>
+<div><div class="ad-meta" style="padding:0 0 4px"><h3 style="margin:0">Hvor skal du begynne? (problem → løsning)</h3><span class="chip">Forslag</span></div><p class="ad-kommentar" style="margin:10px 0 0" hidden></p><div class="ad-act" style="padding:8px 0 0"><button type="button" class="ok">Godkjenn</button><button type="button" class="nei">Ikke godkjenn</button></div><form class="ad-endre" style="padding:8px 0 0" hidden><label>Hva vil dere at vi skal endre?<textarea aria-label="Hva vil dere at vi skal endre?"></textarea></label><button type="submit">Send</button></form></div></div></div></section>
 
+<section id="sec-ok" style="padding-top:20px" hidden><h2>Godkjent</h2><div class="adgrid" id="g-ok"></div></section>
 <script>
 (()=>{const HOOK='https://hook.eu1.make.com/1arekwfeky6chrxvuop8iiuwwf0gi5bg',SLUG='badstugutta',BEDRIFT='Badstugutta AS';
-let st={};
-function vis(){document.querySelectorAll('.ad[data-id]').forEach(a=>{const v=st[a.dataset.id],c=a.querySelector('.chip');if(!v)return;
- if(v.status==='godkjent'){c.textContent='Godkjent';c.className='chip ok';a.querySelector('.ad-act').hidden=true}
- else{c.textContent='Endring sendt';c.className='chip'}})}
+let st={};const ads=[...document.querySelectorAll('.ad[data-id]')];const hjem=new Map(ads.map(a=>[a,a.parentNode]));
+function vis(){
+ const gNei=document.getElementById('g-nei'),gOk=document.getElementById('g-ok');
+ ads.forEach(a=>{const v=st[a.dataset.id],c=a.querySelector('.chip'),k=a.querySelector('.ad-kommentar'),act=a.querySelector('.ad-act');
+  if(v&&v.status==='godkjent'){c.textContent='Godkjent';c.className='chip ok';act.hidden=true;k.hidden=true;gOk.appendChild(a)}
+  else if(v&&v.status==='ikke_godkjent'){c.textContent='Ikke godkjent';c.className='chip';act.hidden=false;
+   k.hidden=false;k.innerHTML='<b>Ønsket endring:</b> '+(v.kommentar||'').replace(/[&<>]/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[x]));
+   a.querySelector('.nei').textContent='Endre ønske';gNei.appendChild(a)}
+  else{hjem.get(a).appendChild(a)}
+  a.classList.toggle('bred',a.classList.contains('vidrow')&&a.parentNode!==hjem.get(a));
+ });
+ ['g-video','g-bilde'].forEach(i=>{const g=document.getElementById(i);if(g)g.closest('section').hidden=!g.children.length});document.getElementById('sec-nei').hidden=!gNei.children.length;document.getElementById('sec-ok').hidden=!gOk.children.length;
+}
 function lagre(a,status,kommentar){st[a.dataset.id]={status,kommentar,tid:new Date().toISOString()};vis();
  fetch(HOOK,{method:'POST',mode:'no-cors',body:new URLSearchParams({handling:'lagre',kunde:SLUG,bedrift:BEDRIFT,annonse:a.dataset.navn,status,kommentar,statuser:JSON.stringify(st)})}).catch(()=>{})}
 fetch(HOOK+'?handling=hent&kunde='+SLUG).then(r=>r.json()).then(d=>{st=d||{};vis()}).catch(()=>{});
-document.querySelectorAll('.ad[data-id]').forEach(a=>{const f=a.querySelector('.ad-endre');
+ads.forEach(a=>{const f=a.querySelector('.ad-endre'),t=f.querySelector('textarea');
  a.querySelector('.ok').onclick=()=>{f.hidden=true;lagre(a,'godkjent','')};
- a.querySelector('.endre').onclick=()=>{f.hidden=!f.hidden;if(!f.hidden)f.querySelector('textarea').focus()};
- f.onsubmit=e=>{e.preventDefault();const t=f.querySelector('textarea').value.trim();if(!t)return;f.hidden=true;lagre(a,'endre',t);f.querySelector('textarea').value=''};
+ a.querySelector('.nei').onclick=()=>{f.hidden=!f.hidden;if(!f.hidden){t.value=(st[a.dataset.id]||{}).kommentar||'';t.focus()}};
+ f.onsubmit=e=>{e.preventDefault();const v=t.value.trim();if(!v){t.focus();return}f.hidden=true;lagre(a,'ikke_godkjent',v)};
 });})();
 </script>
 <section id="kontakt">
