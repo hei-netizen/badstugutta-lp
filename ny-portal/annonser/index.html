@@ -297,7 +297,7 @@ button:active,.copy:active,.btn:active,.tile:active{transform:scale(.97)}
 <main class="wrap">
 <div class="page-h"><span class="eyebrow">Annonser</span><h1>Annonsene deres</h1>
 <p class="lead">Video og bildeannonser vi har laget til dere.</p></div>
-<section id="sec-nei" style="padding-top:20px" hidden><h2>Ikke godkjent</h<div id="laster" style="padding:30px 0;color:var(--muted)">Laster …</div>
+<div id="laster" style="padding:30px 0;color:var(--muted)">Laster …</div>
 <div id="logginn" class="card logginn" hidden>
   <h2 style="margin-top:0">Logg inn</h2>
   <form id="f-passord"><label>Passord<input type="password" id="passord" autocomplete="current-password" required></label>
@@ -398,7 +398,9 @@ SB.auth.onAuthStateChange((ev,s)=>{if(ev==='SIGNED_IN'&&s&&!$('logginn').hidden)
 SB.auth.getSession().then(async({data:{session}})=>{if(session)return vis(session);const s=await fraGammel();s?vis(s):logginn()});
 })();
 </script>
-tar">V</div>
+<section id="kontakt">
+    <div class="card person">
+      <div class="avatar">V</div>
       <div style="flex:1;min-width:200px">
         <b>Victor Skretteberg</b><br>
         <span style="color:var(--muted)">Deres kontaktperson hos Arcads</span>
